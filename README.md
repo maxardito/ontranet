@@ -1,5 +1,11 @@
 # Ontranet
 
+![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
+![License](https://img.shields.io/github/license/maxardito/ontranet)
+![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+![Made with PyTorch](https://img.shields.io/badge/Made%20with-PyTorch-red?logo=pytorch)
+![Built with Nix](https://img.shields.io/badge/Built%20with-Nix-5277C3?logo=nixos)
+
 An onset-based transformer model for audio source classification
 
 This README contains instructions for reproducibility. For an in depth tour of the model, see the [about](https://github.com/maxardito/ontranet/blob/main/docs/about.md) file in the `docs` directory.
