@@ -1,7 +1,7 @@
 # Ontranet
 
 ![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)
-![License](https://img.shields.io/github/license/maxardito/ontranet)
+[![License](https://img.shields.io/github/license/maxardito/ontranet)](https://github.com/maxardito/ontranet/blob/main/LICENSE)
 ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![Made with PyTorch](https://img.shields.io/badge/Made%20with-PyTorch-red?logo=pytorch)
 ![Built with Nix](https://img.shields.io/badge/Built%20with-Nix-5277C3?logo=nixos)
