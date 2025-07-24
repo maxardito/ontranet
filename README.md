@@ -49,7 +49,7 @@ Make sure to run this in the root directory of the entire repo. This should inst
 
 ## 📠 Preprocessing
 
-If you want to train the model on a new folder of stems, you can run
+If you want to train the model on a new folder of audio files, you can run
 
 ```
 python preprocess.py --input path/to/audiofiles --output path/to/data.pth
