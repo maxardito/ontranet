@@ -1,12 +1,12 @@
 # Ontranet: About The Model
 ### An Onset Based Model
-Stem classification is an interesting problem because it requires us to examine the assumptions made about what _defines_ a stem. Here are some initial thoughts that I had in response to the question "what is a stem":
+Source classification is an interesting problem because it requires us to examine the assumptions made about what _defines_ an audio source. Here are some initial thoughts that I had in response to the question "what is a source" in studio music:
 
   1. A sound source coming from the same microphone during a recording
   2. A track of audio with distinct timbral continuity
   3. Any audio output resulting from the parameter space of a given acoustic, analog, or digital instrument
 
-If we're trying to classify stems into four categories, the problem simplifies because we can make assumptions about the characteristics of those four sound classes. More specifically, the categories of `voice`, `drums`, and `bass` each consist of very distinct features when split up with respect to their onsets. My hypothesis here in making this model was that with a large enough dataset of stems, the small musical time-scale of a single sound object (note, percussive hit, etc.) contains enough salient information in itself to be able to infer about the class in which the larger stem belongs. We can thus define a very general outline for a ML model as such:
+If we're trying to classify common studio music sources into four categories, the problem simplifies because we can make assumptions about the characteristics of those four sound classes. More specifically, the categories of `voice`, `drums`, and `bass` each consist of very distinct features when split up with respect to their onsets. My hypothesis here in making this model was that with a large enough dataset of audio, the small musical time-scale of a single sound object (note, percussive hit, etc.) contains enough salient information in itself to be able to infer about the class in which the larger track belongs. We can thus define a very general outline for a ML model as such:
 
 ```math
 f : \mathcal{X} \rightarrow \mathcal{C}
@@ -18,15 +18,15 @@ Where $x_{i} \in \mathcal{X}$ are audio splices belonging to the space of audio 
 \hat{c}_{i} = f(x_{i})
 ```
 
-However, the actual classification of the stem can be expressed as the mode, or "majority vote" of each predicted class within the stem. Thus, the final prediction for the stem can be expressed like this:
+However, the actual classification of the tracks can be expressed as the mode, or "majority vote" of each predicted class within the track. Thus, the final prediction for the source can be expressed like this:
 
 ```math
-\hat{c}_{\mathrm{stem}} = \mathrm{arg}\max_{c \in \mathcal{C}}\sum_{i = 1}^{N}\mathbf{I}(f(x_{i}) = \hat{c}_{i})
+\hat{c}_{\mathrm{source}} = \mathrm{arg}\max_{c \in \mathcal{C}}\sum_{i = 1}^{N}\mathbf{I}(f(x_{i}) = \hat{c}_{i})
 ```
 
-The important assumption here is that _there is enough salient information contained in the homogeneity of onset-based audio splices within a stem to classify it into one of the four categories_.
+The important assumption here is that _there is enough salient information contained in the homogeneity of onset-based audio splices within a track to classify it into one of the four categories_.
 
-Lastly, we could train the model on a twin loss, one pertaining to individual splices and the other to stems in our dataset. While this could be cool to play with in the future, I simply decided to train using a cross-entropy loss pertaining just to individual splices.
+Lastly, we could train the model on a twin loss, one pertaining to individual splices and the other to sources in our dataset. While this could be cool to play with in the future, I simply decided to train using a cross-entropy loss pertaining just to individual splices.
 
 ### Feature Representations
 
@@ -40,7 +40,7 @@ At first, I thought that we could maybe get away with just using these features 
   <img src="../plots/pca_mfcc_plot.png" alt="MFCC plot" width="400">
 </p>
 
-The plot shows quite a bit of overlap between the four classes. While much of this overlap is a result of the dimensionality reduction, I figured that we could do a better job separating the feature space by leveraging structural invariance across each feature vector's temporal dimension, instead of just relying on mean features. Thus, I decided to use a transformer in order to encode positional relationships across time for each splice's features, since patterns will most certainly arise based on the contour of each of these features across time. The transformer is thus a great way to encode this contour across time using self-attention. After encoding and pooling the features as tokens, the network passes them through a fully-connected classifying layer with four neurons, each representing one of the stem classes.
+The plot shows quite a bit of overlap between the four classes. While much of this overlap is a result of the dimensionality reduction, I figured that we could do a better job separating the feature space by leveraging structural invariance across each feature vector's temporal dimension, instead of just relying on mean features. Thus, I decided to use a transformer in order to encode positional relationships across time for each splice's features, since patterns will most certainly arise based on the contour of each of these features across time. The transformer is thus a great way to encode this contour across time using self-attention. After encoding and pooling the features as tokens, the network passes them through a fully-connected classifying layer with four neurons, each representing one of the source classes.
 
 ### Training 
 
@@ -48,13 +48,13 @@ The model was trained for just 10 epochs with a batch size of 16 after the loss 
 
 ### Results (MUSDB18)
 
-Before testing with the stems that were given in question 1, I decided to make a test set from the MUSDB18 model. Using 25 of the masters from the dataset (100 stems total), I tested the accuracy of splice classification, stem classification, and generated a confusion matrix for splice classification. Note that splices are called "chunks" in the plot titles:
+I decided to make a test set from the MUSDB18 model. Using 25 of the masters from the dataset (100 stems total), I tested the accuracy of splice classification, source classification, and generated a confusion matrix for splice classification. Note that splices are called "chunks" in the plot titles:
 
 <p align="center">
   <img src="../plots/msdb-test/splice_accuracy.png" alt="Splice Accuracy" width="400"/>
-  <img src="../plots/msdb-test/stem_accuracy.png" alt="Stem Accuracy" width="400"/>
+  <img src="../plots/msdb-test/stem_accuracy.png" alt="Source Accuracy" width="400"/>
   <img src="../plots/msdb-test/confusion_matrix.png" alt="Confusion Matrix" width="400"/>
 </p>
 
-While the model's accuracy in classifying isolated chunks into the four classes ranges between 80% for `drums` and `other` and 90% for `voice`, the majority vote system for classifying actual stems performed incredibly well, resulting in a total accuracy of __97%__ of the stems. One clear area of improvement in the confusion matrix is the false classification of `other` as `voice`, which makes sense as these types of stems most likely have more ambiguous spliced chunks for analysis due to other being a catch-all category.
+While the model's accuracy in classifying isolated chunks into the four classes ranges between 80% for `drums` and `other` and 90% for `voice`, the majority vote system for classifying actual sources performed incredibly well, resulting in a total accuracy of __97%__ of the stems. One clear area of improvement in the confusion matrix is the false classification of `other` as `voice`, which makes sense as these types of sources most likely have more ambiguous spliced chunks for analysis due to other being a catch-all category.
 
